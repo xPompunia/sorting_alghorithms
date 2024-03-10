@@ -112,22 +112,6 @@ def insertion_sort(tab):
 # -----------------------------------------
 
 
-# INSERTION SORT
-@timer
-def insertion_sort(tab):
-    for i in range(1, len(tab)):
-        key = tab[i]
-
-        j = i - 1
-        while j >= 0 and key < tab[j]:
-            tab[j + 1] = tab[j]
-            j -= 1
-            tab[j + 1] = key
-    return tab
-
-# -----------------------------------------
-
-
 # SHELL SORT
 @timer
 def shell_sort(tab):
