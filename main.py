@@ -95,11 +95,67 @@ def quick_sort(tab, p, r, pivot):
 
 # ------------------------------------------
 
-sorting_type = {'h': (heap_sort, "Heap Sort"), 's': (selection_sort, "Selection Sort"), 'q': (quick_sort, "Quick Sort")}
+
+# INSERTION SORT
+@timer
+def insertion_sort(tab):
+    for i in range(1, len(tab)):
+        key = tab[i]
+
+        j = i - 1
+        while j >= 0 and key < tab[j]:
+            tab[j + 1] = tab[j]
+            j -= 1
+            tab[j + 1] = key
+    return tab
+
+# -----------------------------------------
+
+
+# INSERTION SORT
+@timer
+def insertion_sort(tab):
+    for i in range(1, len(tab)):
+        key = tab[i]
+
+        j = i - 1
+        while j >= 0 and key < tab[j]:
+            tab[j + 1] = tab[j]
+            j -= 1
+            tab[j + 1] = key
+    return tab
+
+# -----------------------------------------
+
+
+# SHELL SORT
+@timer
+def shell_sort(tab):
+    n = len(tab)
+    interval = n // 2
+    while interval > 0:
+        for i in range(interval, n):
+            temp = tab[i]
+            j = i
+            while j >= interval and tab[j - interval] > temp:
+                tab[j] = tab[j - interval]
+                j -= interval
+
+            tab[j] = temp
+        interval //= 2
+    return tab
+
+# -----------------------------------------
+
+
+sorting_type = {'h': (heap_sort, "Heap Sort"), 's': (selection_sort, "Selection Sort"), 'q': (quick_sort, "Quick Sort"), "i": (insertion_sort, "Insertion Sort"), 'l': (shell_sort, "Shell Sort")}
+
 user_input = input("Select sorting type\n"
                    "Heap Sort (type 'h')\n"
                    "Selection Sort (type 's')\n"
                    "Quick Sort (type 'q')\n"
+                   "Insertion Sort (type 'i')\n"
+                   "Shell Sort (type 'l')\n"
                    "Your input: ")
 if user_input == 'q':
     pivot = (input("Select pivot (most left - type 'l'), (random - type 'r') "))
