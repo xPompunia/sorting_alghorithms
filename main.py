@@ -1,5 +1,7 @@
 from time import time
 import matplotlib.pyplot as plt
+from scipy.interpolate import interp1d, splrep, splev
+
 from data_generator import *
 import sys
 
@@ -106,7 +108,7 @@ def insertion_sort(tab):
         while j >= 0 and key < tab[j]:
             tab[j + 1] = tab[j]
             j -= 1
-            tab[j + 1] = key
+        tab[j + 1] = key
     return tab
 
 # -----------------------------------------
@@ -116,24 +118,66 @@ def insertion_sort(tab):
 @timer
 def shell_sort(tab):
     n = len(tab)
-    interval = n // 2
-    while interval > 0:
-        for i in range(interval, n):
+    sedgewick_gaps = [1]
+    gap = 1
+    while gap < n:
+        gap = 4 * gap + 3 * 2 ** (len(sedgewick_gaps) - 1) + 1
+        sedgewick_gaps.append(gap)
+
+    for gap in reversed(sedgewick_gaps):
+        for i in range(gap, n):
             temp = tab[i]
             j = i
-            while j >= interval and tab[j - interval] > temp:
-                tab[j] = tab[j - interval]
-                j -= interval
-
+            while j >= gap and tab[j - gap] > temp:
+                tab[j] = tab[j - gap]
+                j -= gap
             tab[j] = temp
-        interval //= 2
     return tab
+
 
 # -----------------------------------------
 
 
 sorting_type = {'h': (heap_sort, "Heap Sort"), 's': (selection_sort, "Selection Sort"), 'q': (quick_sort, "Quick Sort"), "i": (insertion_sort, "Insertion Sort"), 'l': (shell_sort, "Shell Sort")}
 
+
+data_num = [10, 50, 100, 500, 1000, 2000, 3000, 4000, 5000, 10000]
+data_num2 = [10, 50, 100, 200, 500, 1000, 5000, 10000, 25000, 50000]
+data_type_name = ["constant", "random", "ascending order", "descending order", "A shaped"]
+data_type = [generate_constant_data, generate_random_data, generate_ascending_data, generate_descending_data,
+             generate_A_shaped_array]
+
+
+
+# Wszystkie sorty w danym ukladzie danych
+# times_ql = []
+# times_qr = []
+#
+# for alg in sorting_type.values():
+#     times = []
+#     for d in data_num:
+#         data = generate_ascending_data(d)
+#         if alg[1] == 'Quick Sort':
+#             start = time()
+#             quick_sort(data, 0, len(data) - 1, 'l')
+#             end = time() - start
+#             times_ql.append(end)
+#
+#             start = time()
+#             quick_sort(data, 0, len(data) - 1, 'r')
+#             end = time() - start
+#             times_qr.append(end)
+#         else:
+#             alg[0](data)
+#     if alg[1] == 'Quick Sort':
+#         plt.plot(data_num, times_qr, label=f"{alg[1]} - random pivot")
+#         plt.plot(data_num, times_ql, label=f"{alg[1]} - left pivot")
+#     else:
+#         plt.plot(data_num, times, label=f"{alg[1]}")
+
+
+
+# Jeden sort dla wszystkich układów danych
 user_input = input("Select sorting type\n"
                    "Heap Sort (type 'h')\n"
                    "Selection Sort (type 's')\n"
@@ -144,10 +188,6 @@ user_input = input("Select sorting type\n"
 if user_input == 'q':
     pivot = (input("Select pivot (most left - type 'l'), (random - type 'r') "))
 
-data_num = [10, 50, 100, 500, 1000, 2000, 3000, 4000, 5000, 10000]
-data_type_name = ["constant", "random", "ascending order", "descending order", "A shaped"]
-data_type = [generate_constant_data, generate_random_data, generate_ascending_data, generate_descending_data,
-             generate_A_shaped_array]
 for data in data_type:
     times = []
     for num in data_num:
@@ -161,7 +201,13 @@ for data in data_type:
             sorting_type[user_input][0](d)
         if num == 10:
             print(f"Sorted array: {d}")
-    plt.plot(data_num, times, label=f"{data_type_name[data_type.index(data)]}")
+
+    spline = splrep(data_num, times)
+    x_new = data_num.copy()
+    y_new = splev(x_new, spline)
+    plt.plot(x_new, y_new, label=f"{data_type_name[data_type.index(data)]}")
+
+
 
 
 plt.legend()
