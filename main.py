@@ -192,6 +192,8 @@ for data in data_type:
     times = []
     for num in data_num:
         d = data(num)
+        if num == 10:
+            print(f"Unsorted array: {d}")
         if user_input == 'q':
             start = time()
             quick_sort(d, 0, len(d) - 1, pivot)
@@ -200,7 +202,7 @@ for data in data_type:
         else:
             sorting_type[user_input][0](d)
         if num == 10:
-            print(f"Sorted array: {d}")
+            print(f"Sorted array: {d}\n")
 
     spline = splrep(data_num, times)
     x_new = data_num.copy()
@@ -209,8 +211,22 @@ for data in data_type:
 
 
 
+# Pojednycze sorty + pojedyncze typy danych
+# times = []
+# for d in data_num:
+#     data = generate_constant_data(d)
+#     shell_sort(data)
+#
+# data_num_sorted, times_sorted = zip(*sorted(zip(data_num, times)))
+# spline = splrep(data_num_sorted, times_sorted)
+# x_new = data_num.copy()
+# y_new = splev(x_new, spline)
+# plt.plot(x_new, y_new, label=f"constant")
+
+
 
 plt.legend()
+# plt.title(f"Shell Sort with different type of data")
 plt.title(f"{sorting_type[user_input][1]} with different type of data")
 plt.xlabel("Number of data")
 plt.ylabel("Seconds (s)")
